@@ -12,15 +12,22 @@ export abstract class BaseRepository<T extends Document>
   ): Promise<T | null> {
     return this.model
       .findOne(entityFilterQuery, {
-        _id: 0,
-        __v: 0,
+        // _id: 0,
+        // __v: 0,
         ...projection,
       })
       .exec()
   }
 
-  async find(entityFilterQuery: FilterQuery<T>): Promise<T[] | null> {
-    return this.model.find(entityFilterQuery)
+  async find(
+    entityFilterQuery: FilterQuery<T>,
+    projection?: Record<string, unknown>
+  ): Promise<T[] | null> {
+    return this.model.find(entityFilterQuery, {
+      // _id: 0,
+      // __v: 0,
+      ...projection,
+    })
   }
 
   async create(createEntityData: unknown): Promise<T> {

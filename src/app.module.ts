@@ -4,6 +4,9 @@ import { AppService } from './app.service'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { MongooseModule } from '@nestjs/mongoose'
 import { UsersModule } from './users/users.module'
+import { AuthModule } from './auth/auth.module'
+import { APP_GUARD } from '@nestjs/core'
+import { AccessTokenAuthGuard } from './auth/passport/access-auth.guard'
 
 @Module({
   imports: [
@@ -18,8 +21,12 @@ import { UsersModule } from './users/users.module'
       inject: [ConfigService], // inject the ConfigService to access the configuration values
     }),
     UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    { provide: APP_GUARD, useClass: AccessTokenAuthGuard },
+  ],
 })
 export class AppModule {}

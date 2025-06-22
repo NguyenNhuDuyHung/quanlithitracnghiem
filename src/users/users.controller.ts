@@ -15,6 +15,7 @@ import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { User } from './schemas/user.schema'
 import { ParseMongoIdPipe } from '../utils/validation.pipe'
+import { Public } from 'src/auth/passport/decorator'
 
 @Controller('users')
 export class UsersController {

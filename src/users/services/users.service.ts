@@ -7,13 +7,14 @@ import { CreateUserDto } from '../dto/create-user.dto'
 import { UpdateUserDto } from '../dto/update-user.dto'
 import { UsersRepository } from '../repositories/users.repository'
 import { User } from '../schemas/user.schema'
+import { hashPassword } from 'src/utils/validation.pipe'
 
 @Injectable()
 export class UsersService {
   constructor(private readonly userRepository: UsersRepository) {}
 
   async findAll(): Promise<User[] | null> {
-    return await this.userRepository.find({})
+    return await this.userRepository.find({}, { password: 0 })
   }
 
   async findById(id: string): Promise<User | null> {
@@ -41,6 +42,8 @@ export class UsersService {
       throw new ConflictException(
         `User with email ${createUserDto.email} already exists`
       )
+
+    createUserDto.password = hashPassword(createUserDto.password)
 
     return await this.userRepository.create(createUserDto)
   }
