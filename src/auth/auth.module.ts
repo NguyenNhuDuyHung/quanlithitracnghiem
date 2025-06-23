@@ -8,6 +8,7 @@ import { PassportModule } from '@nestjs/passport'
 import { LocalStrategy } from './passport/local.strategy'
 import { AccessTokenStrategy } from './passport/access-token.strategy'
 import { RefreshTokenStrategy } from './passport/refresh-token.strategy'
+import { GoogleOauthStrategy } from './passport/google-oauth.strategy'
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { RefreshTokenStrategy } from './passport/refresh-token.strategy'
     LocalStrategy,
     AccessTokenStrategy,
     RefreshTokenStrategy,
+    GoogleOauthStrategy,
   ],
 })
 export class AuthModule {}

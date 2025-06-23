@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { UsersRepository } from 'src/users/repositories/users.repository'
 import { comparePassword } from 'src/utils/validation.pipe'
+import { LoginGoogleUserDto } from '../dto/login-google-user.dto'
 
 @Injectable()
 export class AuthService {
@@ -49,5 +50,17 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
     }
+  }
+
+  async googleLogin(user: LoginGoogleUserDto) {
+    const existingUser = await this.usersRepository.findOne({
+      email: user.email,
+    })
+
+    if (existingUser) return this.login(existingUser)
+
+    const newUser = await this.usersRepository.create(user)
+
+    return this.login(newUser)
   }
 }

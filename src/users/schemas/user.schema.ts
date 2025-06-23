@@ -9,7 +9,7 @@ export class User {
   @Prop({ required: true, unique: true })
   email: string
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   password: string
 
   @Prop({ required: true })
@@ -26,6 +26,9 @@ export class User {
 
   @Prop({ required: false })
   avatar?: string
+
+  @Prop({ required: true, default: 'local', enum: ['local', 'google'] })
+  type: string
 
   @Prop({ required: false })
   otp?: string

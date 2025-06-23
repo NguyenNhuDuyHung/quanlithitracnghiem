@@ -26,6 +26,7 @@ export class CreateUserDto {
   @IsPhoneNumber('VN', {
     message: 'Phone number must be a valid Vietnamese phone number',
   })
+  @IsNotEmpty({ message: 'Phone number is required' })
   phone?: string
 
   @IsOptional()
