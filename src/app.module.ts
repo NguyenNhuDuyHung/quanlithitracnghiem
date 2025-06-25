@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module'
 import { AuthModule } from './auth/auth.module'
 import { APP_GUARD } from '@nestjs/core'
 import { AccessTokenAuthGuard } from './auth/passport/access-auth.guard'
+import { UserCataloguesModule } from './user_catalogues/user_catalogues.module'
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { AccessTokenAuthGuard } from './auth/passport/access-auth.guard'
     }),
     UsersModule,
     AuthModule,
+    UserCataloguesModule,
   ],
   controllers: [AppController],
   providers: [

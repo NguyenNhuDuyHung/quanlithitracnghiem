@@ -8,26 +8,37 @@ export abstract class BaseRepository<T extends Document>
 
   async findOne(
     entityFilterQuery: FilterQuery<T>,
-    projection?: Record<string, unknown>
+    projection?: Record<string, unknown>,
+    populate?: string
   ): Promise<T | null> {
-    return this.model
-      .findOne(entityFilterQuery, {
-        // _id: 0,
-        // __v: 0,
-        ...projection,
-      })
-      .exec()
-  }
-
-  async find(
-    entityFilterQuery: FilterQuery<T>,
-    projection?: Record<string, unknown>
-  ): Promise<T[] | null> {
-    return this.model.find(entityFilterQuery, {
+    let query = this.model.findOne(entityFilterQuery, {
       // _id: 0,
       // __v: 0,
       ...projection,
     })
+
+    if (populate) query = query.populate(populate)
+    return query.exec()
+  }
+
+  async find(
+    entityFilterQuery: FilterQuery<T>,
+    projection?: Record<string, unknown>,
+    populate?: string,
+    sort?: Record<string, 1 | -1>,
+    limit: number = 5,
+    skip?: number
+  ): Promise<T[] | null> {
+    let query = this.model.find(entityFilterQuery, {
+      // _id: 0,
+      // __v: 0,
+      ...projection,
+    })
+    if (populate) query = query.populate(populate)
+    if (sort) query = query.sort(sort)
+    if (limit) query = query.limit(limit)
+    if (skip) query = query.skip(skip)
+    return query.exec()
   }
 
   async create(createEntityData: unknown): Promise<T> {

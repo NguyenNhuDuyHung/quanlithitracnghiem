@@ -3,6 +3,7 @@ import {
   IsDate,
   IsEmail,
   IsIn,
+  IsMongoId,
   IsNotEmpty,
   IsOptional,
   IsPhoneNumber,
@@ -43,6 +44,11 @@ export class CreateUserDto {
   @IsOptional()
   @IsString({ message: 'Avatar must be a string' })
   avatar?: string
+
+  @IsNotEmpty({ message: 'User Catalogue ID is required' })
+  @IsString({ message: 'User Catalogue ID must be a string' })
+  @IsMongoId({ message: 'User Catalogue ID must be a valid MongoDB ID' })
+  userCatalogueId?: string
 
   @IsOptional()
   @IsString({ message: 'OTP must be a string' })

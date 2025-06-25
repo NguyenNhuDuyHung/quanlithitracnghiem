@@ -14,23 +14,51 @@ export class UsersService {
   constructor(private readonly userRepository: UsersRepository) {}
 
   async findAll(): Promise<User[] | null> {
-    return await this.userRepository.find({}, { password: 0 })
+    return await this.userRepository.find(
+      {},
+      { password: 0 },
+      'userCatalogueId'
+    )
   }
 
   async findById(id: string): Promise<User | null> {
-    const user = await this.userRepository.findOne({ _id: id })
+    const user = await this.userRepository.findOne(
+      { _id: id },
+      { password: 0 },
+      'userCatalogueId'
+    )
     if (!user) {
       throw new NotFoundException(`User with id ${id} not found`)
     }
     return user
   }
 
-  async findByEmail(email: string): Promise<User | null> {
-    const user = await this.userRepository.findOne({ email: email })
-    if (!user) {
-      throw new NotFoundException(`User with email ${email} not found`)
-    }
-    return user
+  async search(
+    limit: number,
+    page: number,
+    email: string | RegExp | undefined,
+    fullname: string | RegExp | undefined
+  ): Promise<{
+    users: User[]
+    total: number
+    page: number
+    limit: number
+  } | null> {
+    const entityFilterQuery: Record<string, unknown> = {}
+
+    if (fullname) entityFilterQuery.fullname = new RegExp(fullname, 'i')
+    if (email) entityFilterQuery.email = new RegExp(email, 'i')
+
+    const offset = page * limit
+
+    const [users, total] = await Promise.all([
+      this.userRepository.find(entityFilterQuery, {}, '', {}, limit, offset),
+      this.userRepository.find(entityFilterQuery),
+    ])
+
+    if (!users || !total) throw new NotFoundException('Not found!')
+
+    return { users, total: total.length, page, limit }
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {

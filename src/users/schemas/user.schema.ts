@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { HydratedDocument } from 'mongoose'
-import { timestamp } from 'rxjs'
+import mongoose, { HydratedDocument } from 'mongoose'
 
 export type UserDocument = HydratedDocument<User>
 
@@ -35,6 +34,9 @@ export class User {
 
   @Prop({ required: false })
   otpExpire?: Date
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'UserCatalogues' })
+  userCatalogueId?: mongoose.Schema.Types.ObjectId
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)

@@ -3,13 +3,18 @@ import { AppModule } from './app.module'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { ConfigService } from '@nestjs/config'
 import { ValidationPipe } from '@nestjs/common'
+import mongoose from 'mongoose'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
-  app.useGlobalPipes(new ValidationPipe({
-    transform: true, // automatically transform the request body to the DTO type
-  })) // auto validation of DTOs
+  mongoose.set('debug', true)
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true, // automatically transform the request body to the DTO type
+    })
+  ) // auto validation of DTOs
 
   const configService = app.get(ConfigService)
   const port = configService.get('PORT')

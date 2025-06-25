@@ -8,14 +8,13 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
-  Put,
+  Query,
 } from '@nestjs/common'
 import { UsersService } from './services/users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { User } from './schemas/user.schema'
 import { ParseMongoIdPipe } from '../utils/validation.pipe'
-import { Public } from 'src/auth/passport/decorator'
 
 @Controller('users')
 export class UsersController {
@@ -26,16 +25,26 @@ export class UsersController {
     return await this.usersService.findAll()
   }
 
-  @Get(':id')
+  @Get('id/:id')
   async findById(
     @Param('id', ParseMongoIdPipe) id: string
   ): Promise<User | null> {
     return await this.usersService.findById(id)
   }
 
-  @Get(':email')
-  async findByEmail(@Param('email') email: string): Promise<User | null> {
-    return await this.usersService.findByEmail(email)
+  @Get('search')
+  async search(
+    @Query('limit') limit: number = 5,
+    @Query('page') page: number = 0,
+    @Query('email') email?: string,
+    @Query('fullname') fullname?: string
+  ): Promise<{
+    users: User[]
+    total: number
+    page: number
+    limit: number
+  } | null> {
+    return await this.usersService.search(limit, page, email, fullname)
   }
 
   @Post()
@@ -44,7 +53,7 @@ export class UsersController {
     return await this.usersService.create(createUserDto)
   }
 
-  @Put(':id')
+  @Patch(':id')
   async update(
     @Param('id', ParseMongoIdPipe) id: string,
     @Body() updateUserDto: UpdateUserDto
