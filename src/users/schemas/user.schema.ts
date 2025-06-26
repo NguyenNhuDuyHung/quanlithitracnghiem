@@ -37,6 +37,9 @@ export class User {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'UserCatalogues' })
   userCatalogueId?: mongoose.Schema.Types.ObjectId
+
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ClassGroup' }] })
+  classGroupId?: mongoose.Schema.Types.ObjectId[]
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)

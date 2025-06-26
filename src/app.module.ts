@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module'
 import { APP_GUARD } from '@nestjs/core'
 import { AccessTokenAuthGuard } from './auth/passport/access-auth.guard'
 import { UserCataloguesModule } from './user_catalogues/user_catalogues.module'
+import { ClassGroupModule } from './class_group/class_group.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { UserCataloguesModule } from './user_catalogues/user_catalogues.module'
     UsersModule,
     AuthModule,
     UserCataloguesModule,
+    ClassGroupModule,
   ],
   controllers: [AppController],
   providers: [

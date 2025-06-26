@@ -20,18 +20,6 @@ import { ParseMongoIdPipe } from '../utils/validation.pipe'
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get()
-  async findAll(): Promise<User[] | null> {
-    return await this.usersService.findAll()
-  }
-
-  @Get('id/:id')
-  async findById(
-    @Param('id', ParseMongoIdPipe) id: string
-  ): Promise<User | null> {
-    return await this.usersService.findById(id)
-  }
-
   @Get('search')
   async search(
     @Query('limit') limit: number = 5,
@@ -67,5 +55,17 @@ export class UsersController {
     @Param('id', ParseMongoIdPipe) id: string
   ): Promise<User | boolean> {
     return await this.usersService.delete(id)
+  }
+
+  @Get()
+  async findAll(): Promise<User[] | null> {
+    return await this.usersService.findAll()
+  }
+
+  @Get(':id')
+  async findById(
+    @Param('id', ParseMongoIdPipe) id: string
+  ): Promise<User | null> {
+    return await this.usersService.findById(id)
   }
 }

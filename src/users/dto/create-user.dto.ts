@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer'
 import {
+  IsArray,
   IsDate,
   IsEmail,
   IsIn,
@@ -57,4 +58,9 @@ export class CreateUserDto {
   @IsOptional()
   @IsDate({ message: 'OTP Expiration must be a valid date' })
   otpExpire?: Date
+
+  @IsOptional()
+  @IsArray({ message: 'Class Group ID must be an array' })
+  @IsMongoId({ each: true })
+  classGroupId?: string[]
 }

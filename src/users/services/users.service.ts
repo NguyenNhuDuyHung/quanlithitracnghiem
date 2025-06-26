@@ -25,7 +25,7 @@ export class UsersService {
     const user = await this.userRepository.findOne(
       { _id: id },
       { password: 0 },
-      'userCatalogueId'
+      ['userCatalogueId', 'classGroupId']
     )
     if (!user) {
       throw new NotFoundException(`User with id ${id} not found`)
@@ -79,11 +79,14 @@ export class UsersService {
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User | null> {
     const existingEmail = await this.userRepository.findOne({
       email: updateUserDto.email,
+      _id: { $ne: id },
     })
 
     if (existingEmail)
       throw new ConflictException(`Email ${updateUserDto.email} already exists`)
 
+    if (updateUserDto.password)
+      updateUserDto.password = hashPassword(updateUserDto.password)
     return await this.userRepository.findOneAndUpdate(
       { _id: id },
       updateUserDto

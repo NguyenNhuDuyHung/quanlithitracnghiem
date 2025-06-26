@@ -14,7 +14,7 @@ export class UserCataloguesService {
   }
 
   async findById(id: string): Promise<UserCatalogues | null> {
-    const userCatalogue = this.userCataloguesRepository.findOne({ _id: id })
+    const userCatalogue = await this.userCataloguesRepository.findOne({ _id: id })
     if (!userCatalogue)
       throw new NotFoundException(`User Catalogue with id ${id} not found`)
     return userCatalogue
@@ -76,6 +76,7 @@ export class UserCataloguesService {
   ): Promise<UserCatalogues | null> {
     const existingUserCatalogue = await this.userCataloguesRepository.findOne({
       name: updateUserCatalogueDto.name,
+      _id: { $ne: id },
     })
 
     if (existingUserCatalogue)
