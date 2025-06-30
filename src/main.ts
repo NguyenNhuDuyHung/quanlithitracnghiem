@@ -1,14 +1,17 @@
-import { NestFactory } from '@nestjs/core'
+import { NestFactory, Reflector } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { ConfigService } from '@nestjs/config'
 import { ValidationPipe } from '@nestjs/common'
 import mongoose from 'mongoose'
+import { CaslAbilityFactory } from './casl/casl-ability.factory'
+import { AccessTokenAuthGuard } from './auth/passport/access-auth.guard'
+import { AbilitiesGuard } from './auth/passport/abilities.guard'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
-  mongoose.set('debug', true)
+  // mongoose.set('debug', true)
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -30,6 +33,15 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api/v1', { exclude: [''] })
 
+  const reflector = app.get(Reflector)
+  const caslAbilityFactory = app.get(CaslAbilityFactory)
+
+  app.useGlobalGuards(
+    new AccessTokenAuthGuard(reflector),
+    new AbilitiesGuard(reflector, caslAbilityFactory)
+  )
+
   await app.listen(port)
 }
+
 bootstrap()

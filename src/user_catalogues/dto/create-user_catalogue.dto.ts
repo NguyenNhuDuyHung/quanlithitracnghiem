@@ -1,4 +1,9 @@
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator'
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 
 export class CreateUserCatalogueDto {
   @IsNotEmpty({ message: 'Name is required' })

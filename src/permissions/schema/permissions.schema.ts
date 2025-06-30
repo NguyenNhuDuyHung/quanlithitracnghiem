@@ -5,15 +5,17 @@ export type PermissionDocument = HydratedDocument<Permissions>
 
 @Schema({ timestamps: true })
 export class Permissions {
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true })
   moduleName: string
 
   @Prop({
     required: true,
     enum: ['read', 'create', 'update', 'delete', 'join'],
-    type: [String],
   })
-  action: string[]
+  action: string
+
+  @Prop({ required: false })
+  description?: string
 }
 
 export const PermissionsSchema = SchemaFactory.createForClass(Permissions)

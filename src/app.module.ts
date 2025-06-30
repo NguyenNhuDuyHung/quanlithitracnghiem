@@ -5,11 +5,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { MongooseModule } from '@nestjs/mongoose'
 import { UsersModule } from './users/users.module'
 import { AuthModule } from './auth/auth.module'
-import { APP_GUARD } from '@nestjs/core'
-import { AccessTokenAuthGuard } from './auth/passport/access-auth.guard'
 import { UserCataloguesModule } from './user_catalogues/user_catalogues.module'
-import { ClassGroupModule } from './class_group/class_group.module';
-import { PermissionsModule } from './permissions/permissions.module';
+import { ClassGroupModule } from './class_group/class_group.module'
+import { PermissionsModule } from './permissions/permissions.module'
+import { CaslModule } from './casl/casl.module'
 
 @Module({
   imports: [
@@ -28,11 +27,9 @@ import { PermissionsModule } from './permissions/permissions.module';
     UserCataloguesModule,
     ClassGroupModule,
     PermissionsModule,
+    CaslModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    { provide: APP_GUARD, useClass: AccessTokenAuthGuard },
-  ],
+  providers: [AppService],
 })
 export class AppModule {}

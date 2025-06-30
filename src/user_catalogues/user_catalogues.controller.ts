@@ -24,16 +24,6 @@ export class UserCataloguesController {
     return this.userCataloguesService.create(createUserCatalogueDto)
   }
 
-  @Get()
-  findAll(): Promise<UserCatalogues[] | null> {
-    return this.userCataloguesService.findAll()
-  }
-
-  @Get('id/:id')
-  findById(@Param('id') id: string): Promise<UserCatalogues | null> {
-    return this.userCataloguesService.findById(id)
-  }
-
   @Get('search')
   search(
     @Query('limit') limit: number = 5,
@@ -60,5 +50,15 @@ export class UserCataloguesController {
   @Delete(':id')
   remove(@Param('id') id: string): Promise<UserCatalogues | boolean> {
     return this.userCataloguesService.delete(id)
+  }
+
+  @Get(':id')
+  findById(@Param('id') id: string): Promise<UserCatalogues | null> {
+    return this.userCataloguesService.findById(id)
+  }
+
+  @Get()
+  findAll(): Promise<UserCatalogues[] | null> {
+    return this.userCataloguesService.findAll()
   }
 }

@@ -9,12 +9,17 @@ export class UserCataloguesService {
   constructor(
     private readonly userCataloguesRepository: UserCataloguesRepository
   ) {}
+
   async findAll(): Promise<UserCatalogues[] | null> {
     return await this.userCataloguesRepository.find({})
   }
 
   async findById(id: string): Promise<UserCatalogues | null> {
-    const userCatalogue = await this.userCataloguesRepository.findOne({ _id: id })
+    const userCatalogue = await this.userCataloguesRepository.findOne(
+      { _id: id },
+      {},
+      ['permissions']
+    )
     if (!userCatalogue)
       throw new NotFoundException(`User Catalogue with id ${id} not found`)
     return userCatalogue
@@ -42,7 +47,7 @@ export class UserCataloguesService {
       this.userCataloguesRepository.find(
         entityFilterQuery,
         {},
-        '',
+        [],
         {},
         limit,
         offset

@@ -58,7 +58,7 @@ export class ClassGroupService {
       this.classGroupRepository.find(
         entityFilterQuery,
         {},
-        '',
+        [],
         {},
         limit,
         offset

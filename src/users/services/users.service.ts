@@ -14,18 +14,27 @@ export class UsersService {
   constructor(private readonly userRepository: UsersRepository) {}
 
   async findAll(): Promise<User[] | null> {
-    return await this.userRepository.find(
-      {},
-      { password: 0 },
-      'userCatalogueId'
-    )
+    return await this.userRepository.find({}, { password: 0 }, [
+      { path: 'userCatalogueId' },
+    ])
   }
 
   async findById(id: string): Promise<User | null> {
     const user = await this.userRepository.findOne(
       { _id: id },
       { password: 0 },
-      ['userCatalogueId', 'classGroupId']
+      [
+        {
+          path: 'userCatalogueId',
+          select: 'name',
+          populate: {
+            path: 'permissions',
+          },
+        },
+        {
+          path: 'classGroupId',
+        },
+      ]
     )
     if (!user) {
       throw new NotFoundException(`User with id ${id} not found`)
@@ -36,8 +45,9 @@ export class UsersService {
   async search(
     limit: number,
     page: number,
-    email: string | RegExp | undefined,
-    fullname: string | RegExp | undefined
+    sort: Record<string, 1 | -1>,
+    email?: string | RegExp | undefined,
+    fullname?: string | RegExp | undefined
   ): Promise<{
     users: User[]
     total: number
@@ -49,10 +59,14 @@ export class UsersService {
     if (fullname) entityFilterQuery.fullname = new RegExp(fullname, 'i')
     if (email) entityFilterQuery.email = new RegExp(email, 'i')
 
+    const sortObject: Record<string, 1 | -1> = {}
+    const [field, direction] = sort.toString().split('=')
+    sortObject[field] = direction === '1' ? 1 : -1
+
     const offset = page * limit
 
     const [users, total] = await Promise.all([
-      this.userRepository.find(entityFilterQuery, {}, '', {}, limit, offset),
+      this.userRepository.find(entityFilterQuery, {}, [], sortObject, limit, offset),
       this.userRepository.find(entityFilterQuery),
     ])
 

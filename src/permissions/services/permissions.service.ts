@@ -10,6 +10,7 @@ export class PermissionsService {
   async create(createPermissionDto: CreatePermissionDto) {
     const existingPermission = await this.permissionRepository.findOne({
       moduleName: createPermissionDto.moduleName,
+      action: createPermissionDto.action,
     })
 
     if (existingPermission) {
@@ -49,7 +50,7 @@ export class PermissionsService {
       this.permissionRepository.find(
         entityFilterQuery,
         {},
-        '',
+        [],
         {},
         limit,
         offset
@@ -64,6 +65,7 @@ export class PermissionsService {
   async update(id: string, updatePermissionDto: UpdatePermissionDto) {
     const existingPermission = await this.permissionRepository.findOne({
       moduleName: updatePermissionDto.moduleName,
+      action: updatePermissionDto.action,
       _id: { $ne: id },
     })
 

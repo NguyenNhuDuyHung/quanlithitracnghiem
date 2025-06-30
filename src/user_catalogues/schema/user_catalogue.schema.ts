@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { HydratedDocument } from 'mongoose'
+import mongoose, { HydratedDocument } from 'mongoose'
 
 export type UserCataloguesDocument = HydratedDocument<UserCatalogues>
 
@@ -10,6 +10,11 @@ export class UserCatalogues {
 
   @Prop({ default: true })
   status: boolean
+
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Permissions' }],
+  })
+  permissions: mongoose.Schema.Types.ObjectId[]
 }
 
 export const UserCataloguesSchema = SchemaFactory.createForClass(UserCatalogues)

@@ -16,5 +16,6 @@ import {
   ],
   controllers: [UserCataloguesController],
   providers: [UserCataloguesService, UserCataloguesRepository],
+  exports: [UserCataloguesService, UserCataloguesRepository],
 })
 export class UserCataloguesModule {}

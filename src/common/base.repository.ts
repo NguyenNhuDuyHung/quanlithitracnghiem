@@ -1,4 +1,4 @@
-import { Document, FilterQuery, Model, UpdateQuery } from 'mongoose'
+import { Document, FilterQuery, Model, PopulateOptions, UpdateQuery } from 'mongoose'
 import { IBaseRepository } from './base.repository.interface'
 
 export abstract class BaseRepository<T extends Document>
@@ -9,7 +9,7 @@ export abstract class BaseRepository<T extends Document>
   async findOne(
     entityFilterQuery: FilterQuery<T>,
     projection?: Record<string, unknown>,
-    populate?: string | string[]
+    populate?: PopulateOptions | (string | PopulateOptions)[],
   ): Promise<T | null> {
     let query = this.model.findOne(entityFilterQuery, {
       // _id: 0,
@@ -24,7 +24,7 @@ export abstract class BaseRepository<T extends Document>
   async find(
     entityFilterQuery: FilterQuery<T>,
     projection?: Record<string, unknown>,
-    populate?: string | string[],
+    populate?: PopulateOptions | (string | PopulateOptions)[],
     sort?: Record<string, 1 | -1>,
     limit: number = 5,
     skip?: number
