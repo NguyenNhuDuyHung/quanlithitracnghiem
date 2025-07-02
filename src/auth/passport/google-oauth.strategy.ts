@@ -16,14 +16,12 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
 
   async validate(accessToken: string, refreshToken: string, profile: Profile) {
     const { id, emails, name, photos, provider } = profile
-    const user = {
+    return {
       id,
       fullname: `${name.givenName} ${name.familyName}`,
       email: emails[0].value,
       avatar: photos[0].value,
       type: provider,
     }
-
-    return user
   }
 }

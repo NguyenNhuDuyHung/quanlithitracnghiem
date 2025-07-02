@@ -8,14 +8,18 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { AuthService } from './services/auth.service'
-import { Public, Refresh } from './passport/decorator'
+import { CheckAbilities, Public, Refresh } from './passport/decorator'
 import { LocalAuthGuard } from './passport/local-auth.guard'
 import { RefreshTokenAuthGuard } from './passport/refresh-auth.guard'
 import { GoogleOauthGuard } from './passport/google-oauth.guard'
+import { UsersService } from '../users/services/users.service'
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService
+  ) {}
 
   @Post('login')
   @Public()
@@ -46,5 +50,12 @@ export class AuthController {
     return res.json(tokens)
 
     // return res.redirect('http://localhost:3000')
+  }
+
+  @Get('me')
+  @CheckAbilities({ action: 'read', subject: 'auth' })
+  async me(@Request() req) {
+    const { _id } = req.user
+    return await this.usersService.findById(_id)
   }
 }

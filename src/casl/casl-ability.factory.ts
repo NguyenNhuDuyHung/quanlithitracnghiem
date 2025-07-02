@@ -26,7 +26,16 @@ export class CaslAbilityFactory {
 
     const { can, cannot, build } = new AbilityBuilder(createMongoAbility)
 
-    const userCatalogueId = user.userCatalogueId
+    const userCatalogueId = user?.userCatalogueId
+
+    if (!userCatalogueId) {
+      can('read', 'auth')
+      return build({
+        detectSubjectType: (item) =>
+          item.constructor as ExtractSubjectType<Subjects>,
+      })
+    }
+
     const userCatalogue = await this.userCataloguesService.findById(
       String(userCatalogueId)
     )
