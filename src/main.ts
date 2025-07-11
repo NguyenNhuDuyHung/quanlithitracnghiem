@@ -7,20 +7,31 @@ import mongoose from 'mongoose'
 import { CaslAbilityFactory } from './casl/casl-ability.factory'
 import { AccessTokenAuthGuard } from './auth/passport/access-auth.guard'
 import { AbilitiesGuard } from './auth/passport/abilities.guard'
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
-  // mongoose.set('debug', true)
+  mongoose.set('debug', true)
+  const configService = app.get(ConfigService)
+  const port = configService.get('PORT')
+
+  app.use(cookieParser())
+
+  app.enableCors({
+    origin: configService.get('CLIENT_DOMAIN_DEV'),
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+    allowedHeaders: 'Content-Type, Authorization',
+  })
 
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true, // automatically transform the request body to the DTO type
     })
   ) // auto validation of DTOs
-
-  const configService = app.get(ConfigService)
-  const port = configService.get('PORT')
 
   const config = new DocumentBuilder()
     .setTitle('NestJS API')

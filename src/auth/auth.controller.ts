@@ -24,16 +24,46 @@ export class AuthController {
   @Post('login')
   @Public()
   @UseGuards(LocalAuthGuard)
-  async login(@Request() req) {
-    return this.authService.login(req.user)
+  async login(@Request() req, @Res({ passthrough: true }) res) {
+    const { access_token, refresh_token } = await this.authService.login(
+      req.user
+    )
+
+    res.cookie('access_token', access_token, {
+      expires: new Date(Date.now() + 60 * 60 * 1000), // 1h
+      httpOnly: true,
+      secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+      sameSite: 'strict',
+    })
+
+    res.cookie('refresh_token', refresh_token, {
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7d
+      httpOnly: true,
+      secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+      sameSite: 'strict',
+    })
+
+    return {
+      access_token,
+      refresh_token,
+    }
   }
 
   @Post('refresh')
   @Public()
   @Refresh()
   @UseGuards(RefreshTokenAuthGuard)
-  async refreshToken(@Request() req) {
-    return this.authService.refreshToken(req.user._id)
+  async refreshToken(@Request() req, @Res({ passthrough: true }) res) {
+    const { access_token } = await this.authService.refreshToken(req.user._id)
+
+    res.cookie('access_token', access_token, {
+      expires: new Date(Date.now() + 60 * 60 * 1000), // 1h
+      httpOnly: true,
+      secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+      sameSite: 'strict',
+    })
+
+    return { access_token }
   }
 
   @Get('google')
@@ -45,9 +75,28 @@ export class AuthController {
   @Public()
   @UseGuards(GoogleOauthGuard)
   async googleAuthRedirect(@Req() req, @Res() res) {
-    const tokens = await this.authService.googleLogin(req.user)
+    const { access_token, refresh_token } = await this.authService.googleLogin(
+      req.user
+    )
 
-    return res.json(tokens)
+    res.cookie('access_token', access_token, {
+      expires: new Date(Date.now() + 60 * 60 * 1000), // 1h
+      httpOnly: true,
+      secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+      sameSite: 'strict',
+    })
+
+    res.cookie('refresh_token', refresh_token, {
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7d
+      httpOnly: true,
+      secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+      sameSite: 'strict',
+    })
+
+    return res.json({
+      access_token,
+      refresh_token,
+    })
 
     // return res.redirect('http://localhost:3000')
   }
