@@ -9,6 +9,7 @@ import { UserCataloguesModule } from './user_catalogues/user_catalogues.module'
 import { ClassGroupModule } from './class_group/class_group.module'
 import { PermissionsModule } from './permissions/permissions.module'
 import { CaslModule } from './casl/casl.module'
+import { PermissionRequestsModule } from './permission_requests/permission_requests.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { CaslModule } from './casl/casl.module'
     ClassGroupModule,
     PermissionsModule,
     CaslModule,
+    PermissionRequestsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

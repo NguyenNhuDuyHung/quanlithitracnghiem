@@ -24,8 +24,29 @@ export class AuthController {
   @Post('login')
   @Public()
   @UseGuards(LocalAuthGuard)
-  async login(@Request() req) {
-    return this.authService.login(req.user)
+  async login(@Request() req, @Res({ passthrough: true }) res) {
+    const { access_token, refresh_token } = await this.authService.login(
+      req.user
+    )
+
+    res.cookie('access_token', access_token, {
+      expires: new Date(Date.now() + 60 * 60 * 1000), // 1h
+      httpOnly: true,
+      secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+      sameSite: 'strict',
+    })
+
+    res.cookie('refresh_token', refresh_token, {
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7d
+      httpOnly: true,
+      secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+      sameSite: 'strict',
+    })
+
+    return {
+      access_token,
+      refresh_token
+    }
   }
 
   @Post('refresh')
